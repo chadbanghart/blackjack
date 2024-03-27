@@ -59,44 +59,48 @@
       4.2.1) set a container and then a height for the playerHand
       4.2.2) set a container and then a height for the dealerHand   
     4.3) Render a message
-      4.3.1) Ask the player how much they would like to bet, store value for this hand. This bet amount should be their default 
+      4.3.1) Ask the player how much they would like to bet 
+        4.3.1.1) store value for this hand. This bet amount should be their default 
       amount unless they decide to change the amount later.
     4.4) Render Controls
       4.4.1) buttons should render to the page
-        4.4.1.1) the deal button should be the only available/clickable button at this point
+        4.4.1.1) the deal button and the betting chips should be the only clickable buttons at this point
     4.4) Wait for the user to click a button
 
   5) Handle player clicking button
-    5.1) user clicks deal button
-      5.1.1) when clicked both hands should be dealt
-        5.1.2) two cards from the shuffledDeck should be moved from the shuffledDeck to the playerHand
-          5.1.2.1) Render the playerHand. Both cards should be face up
-        5.1.3) two cards from the shuffledDeck should be moved from the deck to the dealerHand
-          5.1.3.1) Render the dealerHand. The first card should be face down and the second should be face up.   
-    5.2) Calculate playerHand value
-      5.2.1) if player gets blackjack, they win the hand and get paid out at the blackjack ODDS_PAYOUT rate
-        5.2.1.1) Blackjack only occurs if player gets 21 on their deal (only two cards exist in their hand).
-      5.2.2) playerHand is still eligible as long as it is under 21
-      5.2.3) if player has an 'Ace' in their hand assign its appropriate value
-        5.2.3.1) value of Ace should equal 11 as long as they do not exceed 21. if it exceeds 21 with ace value of 11 it converts to a 1.
-      5.2.4) most of logic should be applicable to both calculating player and dealer hands  
-    5.3) Handle player stand
-      5.3.1) all buttons become unavailable until computer turn has finished and hand is over
-    5.4) Handle player hit
-      5.4.1) deal player the next card from the shuffledDeck
-      5.4.2) hit is available until they bust or stand
-    5.5) Handle player double down
-      5.5.1) can only be done after hand is dealt. cannot be used or accessed once a hit has occured on said hand
-      5.5.2) player betAmount doubles
-      5.5.3) player gets hit one and only one card. they either bust or are forced to stand with their new value and their turn ends.
-    5.6) if player busts, they lose
-    5.7) if player stands, it is now the computers turn
-      5.7.1) flip over computers face down card
-      5.7.2) computer must hit until they reach a soft 17 or have busted
-        5.7.2.1) soft 17 means if they reach 17 with an Ace in their hand. that they must hit again if that Ace's value is 11 and not 1.
-      5.7.3) once computer turn is over, return winner of hand
-        5.7.3.1) update message
-        5.7.3.2) update playerBank
+    5.1) player clicks chips
+      5.1.1) if player clicks chips. betAmount will increase by chip amount
+        5.1.1.1) a right click will subtract that amount
+    5.2) player clicks deal button
+      5.2.1) when clicked both hands should be dealt
+        5.2.2) two cards from the shuffledDeck should be moved from the shuffledDeck to the playerHand
+          5.2.2.1) Render the playerHand. Both cards should be face up
+        5.2.3) two cards from the shuffledDeck should be moved from the deck to the dealerHand
+          5.2.3.1) Render the dealerHand. The first card should be face down and the second should be face up.   
+    5.3) Calculate playerHand value
+      5.3.1) if player gets blackjack, they win the hand and get paid out at the blackjack ODDS_PAYOUT rate
+        5.3.1.1) Blackjack only occurs if player gets 21 on their deal (only two cards exist in their hand).
+      5.3.2) playerHand is still eligible as long as it is under 21
+      5.3.3) if player has an 'Ace' in their hand assign its appropriate value
+        5.3.3.1) value of Ace should equal 11 as long as they do not exceed 21. if it exceeds 21 with ace value of 11 it converts to a 1.
+      5.3.4) most of logic should be applicable to both calculating player and dealer hands  
+    5.4) Handle player stand
+      5.4.1) all buttons become unavailable until computer turn has finished and hand is over
+    5.5) Handle player hit
+      5.5.1) deal player the next card from the shuffledDeck
+      5.5.2) hit is available until they bust or stand
+    5.6) Handle player double down
+      5.6.1) can only be done after hand is dealt. cannot be used or accessed once a hit has occured on said hand
+      5.6.2) player betAmount doubles
+      5.6.3) player gets hit one and only one card. they either bust or are forced to stand with their new value and their turn ends.
+    5.7) if player busts, they lose
+    5.8) if player stands, it is now the computers turn
+      5.8.1) flip over computers face down card
+      5.8.2) computer must hit until they reach a soft 17 or have busted
+        5.8.2.1) soft 17 means if they reach 17 with an Ace in their hand. that they must hit again if that Ace's value is 11 and not 1.
+      5.8.3) once computer turn is over, return winner of hand
+        5.8.3.1) update message
+        5.8.3.2) update playerBank
 
   6) Handle player clicking deal button again...
     6.1) upon end of a hand, all buttons aside from from deal button should disappear
@@ -106,13 +110,13 @@
 
 
   BONUS IDEAS)
-    Splitting hands not necessary
-    implement dealer messages with what the house recommends the player does in the situation
-    if a player has not changed their bet value after 5 hands the dealer chimes in with a message to let them know they can increase their bet amount
-    Dealer says "winner winner chicken dinner" on a blackjack
-    implement a "How to play Blackjack link" - thinking if this link is clicked a popup happens on the screen that explains the basics and maybe a little about the more advanced bets
+    -Splitting hands not necessary
+    -implement dealer messages with what the house recommends the player does in the situation
+    -if a player has not changed their bet value after 5 hands the dealer chimes in with a message to let them know they can increase their bet amount
+    -Dealer says "winner winner chicken dinner" on a blackjack
+    -implement a "How to play Blackjack link" - thinking if this link is clicked a popup happens on the screen that explains the basics and maybe a little about the more advanced bets
       hide/show - z-index property
-    show a chips being added or disappearing from the pot  
+    -show a chips being added or disappearing from the pot  
     */  
 
 
