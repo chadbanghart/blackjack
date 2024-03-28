@@ -30,6 +30,6 @@ init();
     render();
   }
 
-  render() {
-    
+  function render() {
+
   }
