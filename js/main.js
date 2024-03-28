@@ -27,4 +27,9 @@ init();
     dealerHand = [];
     betAmount = 10;
     playerBank = 100;
+    render();
+  }
+
+  render() {
+    
   }
