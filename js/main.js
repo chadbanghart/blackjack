@@ -17,3 +17,12 @@
 
 
   /*----- functions -----*/
+
+  function init() {
+    handStatus = null;
+    deck = [];
+    playerHand = [];
+    dealerHand = [];
+    betAmount = 10;
+    playerBank = 100;
+  }
