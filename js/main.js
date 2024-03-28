@@ -3,12 +3,12 @@
 
   /*----- state variables -----*/
   
-  // handStatus
-  // deck
-  // playerHand
-  // dealerHand
-  // betAmount
-  // playerBank
+  let handStatus;
+  let deck;
+  let playerHand;
+  let dealerHand;
+  let betAmount;
+  let playerBank;
 
   /*----- cached elements  -----*/
 
