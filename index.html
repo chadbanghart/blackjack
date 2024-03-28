@@ -5,9 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack</title>
     <link href="css/card-library/css/cardstarter.css" rel="stylesheet" type="text/css" />
-    <script defer src="main.js"></script>
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+    <script defer src="js/main.js"></script>
 </head>
 <body>
-    
+    <h2 id="bj-odds">Blackjack Pays 3/2</h2>
+    <h3 id="min-bet">Minimum Bet: 10</h3>
+    <h2 id="player-bank">Bank: </h2>
+    <div class="card-containter">
+        <div id="dealer-cards"></div>
+        <div id="player-cards"></div>
+    </div>
+    <div class="message-container"></div>
+    <div class="bank-container">
+        <div id="bank-chips"></div>
+    </div>
+    <input type="number" id="bet-amount" value="number" >
+    <div class="chip-container">
+        <button id="chip-5-btn">5</button>
+        <button id="chip-10-btn">10</button>
+        <button id="chip-25-btn">25</button>
+        <button id="chip-100-btn">100</button>
+    </div>
+    <button>Hit</button>
+    <button>Stand</button>
+    <button>Double Down</button>
+    <button>Deal</button>
 </body>
 </html>
