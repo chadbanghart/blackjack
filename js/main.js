@@ -17,6 +17,8 @@
 
 
   /*----- functions -----*/
+init();
+
 
   function init() {
     handStatus = null;
