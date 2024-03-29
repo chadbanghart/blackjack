@@ -15,6 +15,14 @@
   let playerBank;
 
   /*----- cached elements  -----*/
+const dealBtn = document.getElementById('deal');
+const hitBtn = document.getElementById('hit');
+const standBtn = document.getElementById('stand');
+const doubleDownBtn = document.getElementById('dd');
+const chip5Btn = document.getElementById('chip-5');
+const chip10Btn = document.getElementById('chip-10');
+const chip25Btn = document.getElementById('chip-25');
+const chip100Btn = document.getElementById('chip-100');
 
 
   /*----- event listeners -----*/
