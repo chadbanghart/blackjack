@@ -34,7 +34,7 @@ init();
 
   function init() {
     handStatus = null;
-    shuffledDeck = [];
+    shuffledDeck = getNewShuffledDeck();
     playerHand = [];
     dealerHand = [];
     betAmount = MINIMUM_BET;
@@ -43,9 +43,48 @@ init();
   }
 
   function render() {
+      renderHands();
+      renderMessage();
+      renderControls();
+  }
+
+  function renderHands () {
+
+  }
+
+  function renderMessage() {
+
+  }
+
+  function renderControls() {
 
   }
 
   function buildOriginalDeck() {
+    const deck = [];
+    // Use nested forEach to generate card objects
+    SUITS.forEach(function(suit) {
+      RANKS.forEach(function(rank) {
+        deck.push({
+          // The 'face' property maps to the library's CSS classes for cards
+          face: `${suit}${rank}`,
+          // Setting the 'value' property
+          value: Number(rank) || (rank === 'A' ? 11 : 10)
+        });
+      });
+    });
+    return deck;
+  }
 
+  function getNewShuffledDeck() {
+    // Create a copy of the originalDeck (leave originalDeck untouched!)
+    const tempDeck = [...ORIGINAL_DECK];
+    const newShuffledDeck = [];
+    while (tempDeck.length) {
+      // Get a random index for a card still in the tempDeck
+      const rndIdx = Math.floor(Math.random() * tempDeck.length);
+      // Note the [0] after splice - this is because splice always returns an array and we just want the card object in that array
+      newShuffledDeck.push(tempDeck.splice(rndIdx, 1)[0]);
+    }
+    return newShuffledDeck;
   }
