@@ -19,14 +19,12 @@ const dealBtn = document.getElementById('deal');
 const hitBtn = document.getElementById('hit');
 const standBtn = document.getElementById('stand');
 const doubleDownBtn = document.getElementById('dd');
-const chip5Btn = document.getElementById('chip-5');
-const chip10Btn = document.getElementById('chip-10');
-const chip25Btn = document.getElementById('chip-25');
-const chip100Btn = document.getElementById('chip-100');
-
+const betBtns = [ ...document.querySelectorAll('#bet-buttons > button') ];
+const playerHandContainer = document.getElementById('player-container');
+const dealerHandContainer = document.getElementById('dealer-container');
 
   /*----- event listeners -----*/
-
+const deal = dealBtn.addEventListener("click", renderDealCards);
 
   /*----- functions -----*/
 init();
@@ -87,4 +85,22 @@ init();
       newShuffledDeck.push(tempDeck.splice(rndIdx, 1)[0]);
     }
     return newShuffledDeck;
+  }
+
+  function renderDealCards() {
+    shuffledDeck = getNewShuffledDeck();
+    playerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
+    dealerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
+    renderCardsInContainer(playerHand, playerHandContainer);
+    renderCardsInContainer(dealerHand, dealerHandContainer);
+
+  }
+
+  function renderCardsInContainer(hand, container) {
+    container.innerHTML = '';
+    let cardsHtml = '';
+    hand.forEach(function(card) {
+      cardsHtml += `<div class="card ${card.face}"></div>`;
+    });
+    container.innerHTML = cardsHtml;
   }
