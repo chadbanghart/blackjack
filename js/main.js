@@ -22,9 +22,11 @@ const doubleDownBtn = document.getElementById('dd');
 const betBtns = [ ...document.querySelectorAll('#bet-buttons > button') ];
 const playerHandContainer = document.getElementById('player-container');
 const dealerHandContainer = document.getElementById('dealer-container');
+const msgEl = document.querySelector('.dealer-message');
 
   /*----- event listeners -----*/
 const deal = dealBtn.addEventListener("click", renderDealCards);
+const hit = hitBtn.addEventListener("click", hitHand); 
 
   /*----- functions -----*/
 init();
@@ -35,6 +37,7 @@ init();
     shuffledDeck = getNewShuffledDeck();
     playerHand = [];
     dealerHand = [];
+    playerTotal = dealerTotal = 0;
     betAmount = MINIMUM_BET;
     playerBank = INITIAL_PLAYER_BANK;
     render();
@@ -100,7 +103,39 @@ init();
     container.innerHTML = '';
     let cardsHtml = '';
     hand.forEach(function(card) {
-      cardsHtml += `<div class="card ${card.face}"></div>`;
+      cardsHtml += `<div class="card large ${card.face}"></div>`;
     });
     container.innerHTML = cardsHtml;
   }
+
+  function hitHand(curPlayerHand) {
+    curPlayerHand = calculateHandTotal(playerHand);
+    if (curPlayerHand > 21) {
+      playerBust()
+  } else {
+    playerHand.push(shuffledDeck.shift());
+    renderCardsInContainer(playerHand, playerHandContainer);
+  }
+}
+
+  function calculateHandTotal(hand) {
+    let handTotal = 0;
+    let aces = 0;
+    hand.forEach(function(card) {
+      handTotal += card.value;
+      if (card.value === 11) {
+        aces++;
+      }
+      while (handTotal > 21 && aces > 0) {
+        handTotal - 10;
+        aces--;
+      }
+    }); return handTotal;
+}
+
+function playerBust() {
+  let hand = calculateHandTotal(playerHand);
+  if (hand > 21) {
+    msgEl.innerHTML = '<span>You Busted!</span>';
+  };
+}
