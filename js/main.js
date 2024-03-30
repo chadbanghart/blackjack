@@ -13,6 +13,8 @@ let playerHand;
 let dealerHand;
 let betAmount;
 let playerBank;
+let playerTotal;
+let dealerTotal;
 
   /*----- cached elements  -----*/
 const dealBtn = document.getElementById('deal');
@@ -114,16 +116,17 @@ function renderCardsInContainer(hand, container) {
 function calculateHandTotal(hand) {
   let handTotal = 0;
   let aces = 0;
-  hand.forEach(function(card) {
+  hand.forEach(card => {
     handTotal += card.value;
     if (card.value === 11) {
-      aces++;
+      aces += 1;
     }
+  });
     while (handTotal > 21 && aces > 0) {
-      handTotal - 10;
-      aces--;
+      handTotal -= 10;
+      aces -= 1;
     }
-  }); return handTotal;
+  return handTotal;
 }
   
 function playerHit(curPlayerHand) {
@@ -145,8 +148,8 @@ function playerStand() {
 
 function playerDoubleDown() {
   // double bet amount
-  // hit one card
-  // end turn
+  playerHit();
+  playerStand();
 }
 
 function playerBust() {
@@ -158,13 +161,11 @@ function playerBust() {
 
 function dealerPlay() {
   dealerTotal = calculateHandTotal(dealerHand);
-  // let dealerAction;
   renderCardsInContainer(dealerHand, dealerHandContainer);
-  // dealerAction = dealerTotal >= 17 ? dealerStand() : dealerHit();
 
   if (dealerTotal < 17) {
     dealerHit();
-  } else if ( dealerTotal >= 17 && dealerTotal <= 21) {
+  } else if (dealerTotal >= 17 && dealerTotal <= 21) {
     dealerStand();
   } else {
     dealerBust();
@@ -177,8 +178,6 @@ function dealerHit() {
   renderCardsInContainer(dealerHand, dealerHandContainer);
   }
   dealerPlay();
-  
-  console.log("dealer hits");
 }
 
 function dealerStand() {
