@@ -156,7 +156,9 @@ function playerBust() {
   let hand = calculateHandTotal(playerHand);
   if (hand > 21) {
     msgEl.innerHTML = '<span>Dealer: You Busted!</span>';
+    handStatus = 'D';
   };
+  // hand is over, player loses
 }
 
 function dealerPlay() {
@@ -173,17 +175,28 @@ function dealerPlay() {
 }
 
 function dealerHit() {
-  if (dealerTotal < 17) {
-  const hitCard = dealerHand.push(shuffledDeck.shift());
+  dealerHand.push(shuffledDeck.shift());
   renderCardsInContainer(dealerHand, dealerHandContainer);
-  }
   dealerPlay();
 }
 
 function dealerStand() {
+  getOutcome();
 console.log("Dealer must stay");
 }
 
 function dealerBust() {
+  handStatus = 'P'
   console.log("Dealer Busts");
+}
+
+function getOutcome(playerTotal, dealerTotal) {
+  if (playerTotal > dealerTotal) {
+    handStatus = 'P';
+  } else if (dealerTotal > playerTotal) {
+    handStatus = 'D';
+  } else {
+    handStatus = 'T';
+  }
+  return handStatus;
 }
