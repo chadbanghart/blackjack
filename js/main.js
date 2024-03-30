@@ -3,7 +3,7 @@ const SUITS = ['s', 'c', 'd', 'h'];
 const RANKS = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 const ORIGINAL_DECK = buildOriginalDeck();
 const MINIMUM_BET = 10;
-const INITIAL_PLAYER_BANK = 100;
+const INITIAL_PLAYER_BANK = 500;
 const ODDS_PAYOUT = 3/2;
   /*----- state variables -----*/
   
@@ -25,7 +25,9 @@ const betBtns = [ ...document.querySelectorAll('#bet-buttons > button') ];
 const playerHandContainer = document.getElementById('player-container');
 const dealerHandContainer = document.getElementById('dealer-container');
 const msgEl = document.querySelector('.dealer-message');
-const currentBetEl = document.getElementById('#current-bet');
+const currentBetEl = document.getElementById('current-bet');
+const playerBankTextEl = document.getElementById('bank-inner-text');
+const playerBankResultEl = document.getElementById('bank-value');
 
   /*----- event listeners -----*/
 const deal = dealBtn.addEventListener("click", renderDealCards);
@@ -60,7 +62,8 @@ function renderHands () {
 }
 
 function renderMessage() {
-
+  playerBankTextEl.innerText = `${playerBank}`;
+  bankCalculation();
 }
 
 function renderControls() {
@@ -147,9 +150,10 @@ function playerStand() {
 }
 
 function playerDoubleDown() {
-  // double bet amount
+  betAmount *= 2;
   playerHit();
   playerStand();
+  dealerPlay();
 }
 
 function playerBust() {
@@ -157,8 +161,8 @@ function playerBust() {
   if (hand > 21) {
     msgEl.innerHTML = '<span>Dealer: You Busted!</span>';
     handStatus = 'D';
+    dealerPlay();
   };
-  // hand is over, player loses
 }
 
 function dealerPlay() {
@@ -190,13 +194,30 @@ function dealerBust() {
   console.log("Dealer Busts");
 }
 
-function getOutcome(playerTotal, dealerTotal) {
+function getOutcome() {
   if (playerTotal > dealerTotal) {
     handStatus = 'P';
   } else if (dealerTotal > playerTotal) {
     handStatus = 'D';
-  } else {
+  } else if (dealerTotal = playerTotal) {
     handStatus = 'T';
+  } else {
+    handStatus = null;
   }
+  render();
   return handStatus;
+}
+
+function bankCalculation () {
+  if (handStatus === null) return;
+  if (handStatus === 'D') {
+    playerBankResultEl.innerHTML = `<span>You lost $${betAmount} last hand!</span>`;
+    playerBank -= betAmount;
+  } else if (handStatus === 'P') {
+    playerBankResultEl.innerHTML = `<span>You won $${betAmount} last hand!</span>`;
+    playerBank += betAmount;
+  } else {
+    playerBankResultEl.innerHTML = `<span>You pushed the last hand, no money lost or won!</span>`;
+  }
+  return playerBank;
 }

@@ -70,11 +70,32 @@ body {
 .player-bank {
   grid-column: 1 / 2;
   grid-row: 3 / 4;
-  display: flex;
+  display: grid;
   padding: 3vh;
   background-color: #0da86f;
+  grid-template-rows: 1fr 1fr;
+  flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+}
+
+#bank-text {
+  grid-row: 1 / 2;
+  border: 3px solid red;
+  display: flex;
+  font-size: 5vh;
+  font-weight: 700;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#bank-value {
+  grid-row: 2 / 3;
+  border: 3px solid blue;
+  height: 10vh;
+  width: 20vw;
+  justify-content: center;
+  align-items: center;
 }
 
 .game-buttons {
