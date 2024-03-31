@@ -48,7 +48,7 @@ function init() {
   playerTotal = dealerTotal = 0;
   betAmount = MINIMUM_BET;
   playerBank = INITIAL_PLAYER_BANK;
-  msgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount, then click Deal to begin!</span>';
+  msgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount by clicking the chips (the minimum bet at this table is $10), then click Deal to begin!</span>';
   render();
 }
 
@@ -104,7 +104,7 @@ function renderDealCards() {
   playerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
   dealerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
   renderCardsInContainer(playerHand, playerHandContainer);
-  renderCardsInContainer(dealerHand, dealerHandContainer);
+  renderDealerCardsOnDealInContainer(dealerHand, dealerHandContainer);
   msgEl.innerHTML = '';
   playerBankResultEl.innerHTML = '';
   handStatus = null;
@@ -115,6 +115,19 @@ function renderCardsInContainer(hand, container) {
   let cardsHtml = '';
   hand.forEach(function(card) {
     cardsHtml += `<div class="card large ${card.face}"></div>`;
+  });
+  container.innerHTML = cardsHtml;
+}
+
+function renderDealerCardsOnDealInContainer(hand, container) {
+  container.innerHTML = '';
+  let cardsHtml = '';
+  hand.forEach(function(card, index) {
+    if (index === 0) {
+      cardsHtml += `<div class="card large back-red"></div>`;
+    } else if (index === 1) {
+      cardsHtml += `<div class="card large ${card.face}"></div>`;
+    }
   });
   container.innerHTML = cardsHtml;
 }
