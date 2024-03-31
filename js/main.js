@@ -48,6 +48,7 @@ function init() {
   playerTotal = dealerTotal = 0;
   betAmount = MINIMUM_BET;
   playerBank = INITIAL_PLAYER_BANK;
+  msgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount, then click Deal to begin playing!</span>';
   render();
 }
 
@@ -67,7 +68,7 @@ function renderMessage() {
 }
 
 function renderControls() {
-
+  // hide buttons
 }
 
 function buildOriginalDeck() {
@@ -105,6 +106,7 @@ function renderDealCards() {
   dealerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
   renderCardsInContainer(playerHand, playerHandContainer);
   renderCardsInContainer(dealerHand, dealerHandContainer);
+  msgEl.innerHTML = '';
   }
 
 function renderCardsInContainer(hand, container) {
@@ -116,7 +118,7 @@ function renderCardsInContainer(hand, container) {
   container.innerHTML = cardsHtml;
 }
   
-function calculateHandTotal(hand) {
+function calculateHandTotal(hand, player) {
   let handTotal = 0;
   let aces = 0;
   hand.forEach(card => {
@@ -129,22 +131,26 @@ function calculateHandTotal(hand) {
       handTotal -= 10;
       aces -= 1;
     }
+  player = handTotal;
   return handTotal;
 }
-  
-function playerHit(curPlayerHand) {
-  curPlayerHand = calculateHandTotal(playerHand);
-  if (curPlayerHand > 21) {
+
+function checkForPlayerBust(handTotal) {
+  handTotal = calculateHandTotal(playerHand, playerTotal);
+  if (handTotal > 21) {
     playerBust();
-  } else {
-  playerHand.push(shuffledDeck.shift());
-  renderCardsInContainer(playerHand, playerHandContainer);
   }
 }
+  
+function playerHit() {
+  calculateHandTotal(playerHand, playerTotal);
+  playerHand.push(shuffledDeck.shift());
+  renderCardsInContainer(playerHand, playerHandContainer);
+  checkForPlayerBust(playerTotal);
+  }
 
 function playerStand() {
-
-  playerTotal = calculateHandTotal(playerHand);
+  calculateHandTotal(playerHand, playerTotal);
   // disable buttons
   dealerPlay();
 }
@@ -153,20 +159,20 @@ function playerDoubleDown() {
   betAmount *= 2;
   playerHit();
   playerStand();
+  checkForPlayerBust(playerHand);
   dealerPlay();
 }
 
 function playerBust() {
-  let hand = calculateHandTotal(playerHand);
-  if (hand > 21) {
-    msgEl.innerHTML = '<span>Dealer: You Busted!</span>';
+    msgEl.innerHTML = '<span>Dealer: Tough break, you Busted! I win this hand!</span>';
     handStatus = 'D';
-    dealerPlay();
-  };
-}
+    console.log('player has busted')
+    // end play. player must deal again
+    return;
+  }; 
 
 function dealerPlay() {
-  dealerTotal = calculateHandTotal(dealerHand);
+  calculateHandTotal(dealerHand, dealerTotal);
   renderCardsInContainer(dealerHand, dealerHandContainer);
 
   if (dealerTotal < 17) {
@@ -190,6 +196,7 @@ console.log("Dealer must stay");
 }
 
 function dealerBust() {
+  msgEl.innerHTML = '<span>Dealer: Ah, I Busted! You win this hand!</span>';
   handStatus = 'P'
   console.log("Dealer Busts");
 }
