@@ -48,7 +48,7 @@ function init() {
   playerTotal = dealerTotal = 0;
   betAmount = MINIMUM_BET;
   playerBank = INITIAL_PLAYER_BANK;
-  msgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount, then click Deal to begin playing!</span>';
+  msgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount, then click Deal to begin!</span>';
   render();
 }
 
@@ -120,6 +120,7 @@ function renderCardsInContainer(hand, container) {
   
 function calculateHandTotal(hand, player) {
   let handTotal = 0;
+  player;
   let aces = 0;
   hand.forEach(card => {
     handTotal += card.value;
@@ -150,7 +151,7 @@ function playerHit() {
   }
 
 function playerStand() {
-  calculateHandTotal(playerHand, playerTotal);
+  playerTotal = calculateHandTotal(playerHand, playerTotal);
   // disable buttons
   dealerPlay();
 }
@@ -172,7 +173,7 @@ function playerBust() {
   }; 
 
 function dealerPlay() {
-  calculateHandTotal(dealerHand, dealerTotal);
+  dealerTotal = calculateHandTotal(dealerHand);
   renderCardsInContainer(dealerHand, dealerHandContainer);
 
   if (dealerTotal < 17) {
@@ -204,10 +205,13 @@ function dealerBust() {
 function getOutcome() {
   if (playerTotal > dealerTotal) {
     handStatus = 'P';
+    msgEl.innerHTML = '<span>Dealer: You won this hand!</span>';
   } else if (dealerTotal > playerTotal) {
     handStatus = 'D';
+    msgEl.innerHTML = '<span>Dealer: I won this hand!</span>';
   } else if (dealerTotal = playerTotal) {
     handStatus = 'T';
+    msgEl.innerHTML = '<span>Dealer: This hand is a push!</span>';
   } else {
     handStatus = null;
   }
