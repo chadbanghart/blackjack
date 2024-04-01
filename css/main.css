@@ -147,13 +147,23 @@ body {
   grid-row: 3 / 4;
   display: grid;
   background-color: #60a80d;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   justify-content: center;
   align-items: center;
 }
 
+#bet-instruction {
+  grid-row: 1 / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 20vw;
+  height: 5vh;
+}
+
 #wager {
-  grid-row: 2 / 3;
+  grid-row: 3 / 4;
   display: flex;
   justify-content: center;
   width: 20vw;
@@ -162,19 +172,18 @@ body {
   background-color: white;
   color: black;
   align-items: center;
-
 }
 
 .bet-buttons {
   display: flex;
   justify-content: center;
   align-items: center;
-  grid-row: 1 / 2;
+  grid-row: 2 / 3;
 }
 
 .bet-buttons button {
-  height: 9vh;
-  width: 9vh;
+  height: 8vh;
+  width: 8vh;
   display: flex;
   cursor: pointer;
   border-radius: 50%;

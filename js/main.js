@@ -44,6 +44,8 @@ hitBtn.addEventListener("click", playerHit);
 standBtn.addEventListener("click", playerStand);
 doubleDownBtn.addEventListener("click", playerDoubleDown);
 document.querySelector('.bet-buttons').addEventListener("click", handleBetAmount);
+document.querySelector('.bet-buttons').addEventListener("contextmenu", handleSubtractBetAmount);
+
  
 
   /*----- functions -----*/
@@ -194,7 +196,7 @@ function playerDoubleDown() {
   currentBetEl.innerText = `${betAmount}`;
   playerHit();
   if (playerBusted) {
-    return
+    playerBust();
   } else {
   playerStand();
   }  
@@ -238,7 +240,7 @@ function dealerBust() {
 }
 
 function getOutcome() {
-  if (playerTotal > dealerTotal ) {
+  if (playerTotal > dealerTotal) {
     handStatus = 'P';
     msgEl.innerHTML = '<span>Dealer: You won this hand!</span>';
   } else if (dealerTotal > playerTotal) {
@@ -292,6 +294,21 @@ function handleBetAmount(evt) {
   if (chipId in CHIPS) {
     betAmount += CHIPS[chipId];
     currentBetEl.innerText = `${betAmount}`;
-    console.log(betAmount);
   } 
+}
+
+function handleSubtractBetAmount(evt) {
+  evt.preventDefault();
+  let chipId = evt.target.id;
+  if (chipId in CHIPS) {
+    betAmount -= CHIPS[chipId];
+    if (betAmount < MINIMUM_BET) {
+      // dont allow
+      console.log(`you cannot bet less than $${MINIMUM_BET}`);
+      betAmount = MINIMUM_BET; 
+      currentBetEl.innerText = `${betAmount}`;
+    } else {
+    currentBetEl.innerText = `${betAmount}`;
+    }
+  }
 }
