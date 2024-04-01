@@ -29,6 +29,7 @@ body {
   grid-row: 1 / 2;
   background-color: #ffffff;
   border-radius: 50%;
+  padding: 1.5rem;
   color: #000;
   display: flex;
   justify-content: center;
@@ -62,9 +63,34 @@ body {
   grid-column: 3 / 4;
   grid-row: 1 / 2;
   background-color: #16b80e;
-  display: flex;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
   justify-content: center;
   align-items: center;
+}
+
+#bj-odds {
+  grid-row: 1 / 2;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  font-size: 4vh;
+  font-weight: 600;
+  height: 10vh;
+  width: 20vw;
+
+}
+
+#min-bet {
+  grid-row: 2 / 3;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  font-size: 4vh;
+  font-weight: 600;
+  height: 10vh;
+  width: 20vw;
+
 }
 
 .player-bank {
@@ -79,9 +105,8 @@ body {
   align-items: center;
 }
 
-#bank-text {
+#bank-value {
   grid-row: 1 / 2;
-  border: 3px solid red;
   display: flex;
   font-size: 5vh;
   font-weight: 700;
@@ -89,9 +114,8 @@ body {
   align-items: center;
 }
 
-#bank-value {
+#bank-text {
   grid-row: 2 / 3;
-  border: 3px solid blue;
   height: 10vh;
   width: 20vw;
   justify-content: center;
@@ -128,9 +152,10 @@ body {
   align-items: center;
 }
 
-#current-bet {
+#wager {
   grid-row: 2 / 3;
   display: flex;
+  justify-content: center;
   width: 20vw;
   height: 5vh;
   font-size: 4vh;
@@ -148,8 +173,8 @@ body {
 }
 
 .bet-buttons button {
-  height: 7vh;
-  width: 7vh;
+  height: 9vh;
+  width: 9vh;
   display: flex;
   cursor: pointer;
   border-radius: 50%;
