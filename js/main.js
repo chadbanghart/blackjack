@@ -39,12 +39,12 @@ const playerBankTextEl = document.getElementById('bank-value-text');
 const playerBankResultEl = document.getElementById('bank-text');
 
   /*----- event listeners -----*/
-dealBtn.addEventListener("click", renderDealCards);
-hitBtn.addEventListener("click", playerHit);
-standBtn.addEventListener("click", playerStand);
-doubleDownBtn.addEventListener("click", playerDoubleDown);
-document.querySelector('.bet-buttons').addEventListener("click", handleBetAmount);
-document.querySelector('.bet-buttons').addEventListener("contextmenu", handleSubtractBetAmount);
+dealBtn.addEventListener('click', renderDeal);
+hitBtn.addEventListener('click', playerHit);
+standBtn.addEventListener('click', playerStand);
+doubleDownBtn.addEventListener('click', playerDoubleDown);
+document.querySelector('.bet-buttons').addEventListener('click', handleBetAmount);
+document.querySelector('.bet-buttons').addEventListener('contextmenu', handleSubtractBetAmount);
 
  
 
@@ -116,19 +116,29 @@ function getNewShuffledDeck() {
   return newShuffledDeck;
 }
 
-function renderDealCards() {
+function renderDeal() {
+  handStatus = null;
+  msgEl.innerHTML = '';
+  playerBankResultEl.innerHTML = '';
+  playerBusted = false;
+  currentBetEl.innerText = `${betAmount}`;
+  checkLegalBetAmount();
   shuffledDeck = getNewShuffledDeck();
   playerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
   dealerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
   renderCardsInContainer(playerHand, playerHandContainer);
   renderDealerCardsOnDealInContainer(dealerHand, dealerHandContainer);
-  msgEl.innerHTML = '';
-  playerBankResultEl.innerHTML = '';
-  handStatus = null;
-  playerBusted = false;
-  currentBetEl.innerText = `${betAmount}`;
-  checkLegalBetAmount();
+  playerTotal = calculateHandTotal(playerHand);
+  dealerTotal = calculateHandTotal(dealerHand);
+  if (playerTotal === 21 && dealerTotal === 21) {
+    handStatus = 'T';
+  } else if (dealerTotal === 21 && dealerHand.length === 2) {
+    handStatus = 'DBJ';
+  } else if (playerTotal === 21 && playerHand.length === 2) {
+    handStatus = 'PBJ'
   }
+  if (handStatus) getOutcome();
+}
 
 function renderCardsInContainer(hand, container) {
   container.innerHTML = '';
@@ -192,6 +202,11 @@ function playerStand() {
 }
 
 function playerDoubleDown() {
+  if (betAmount * 2 > playerBank) {
+    msgEl.innerText = 'You do not have enough money to double down. your bet will not be doubled, but you can continue playing.';
+    playerHit();
+    return;
+  }
   betAmount *= 2;
   currentBetEl.innerText = `${betAmount}`;
   playerHit();
@@ -205,7 +220,7 @@ function playerDoubleDown() {
 function playerBust() {
     msgEl.innerHTML = '<span>Dealer: Tough break, you Busted! I win this hand!</span>';
     handStatus = 'D';
-    bankCalculation();
+    settleBet();
     // end play. player must deal again
     return;
   }; 
@@ -213,7 +228,6 @@ function playerBust() {
 function dealerPlay() {
   dealerTotal = calculateHandTotal(dealerHand);
   renderCardsInContainer(dealerHand, dealerHandContainer);
-
   if (dealerTotal < 17) {
     dealerHit();
   } else if (dealerTotal >= 17 && dealerTotal <= 21) {
@@ -236,28 +250,35 @@ function dealerStand() {
 function dealerBust() {
   msgEl.innerHTML = '<span>Dealer: Ah, I Busted! You win this hand!</span>';
   handStatus = 'P'
-  bankCalculation();
+  settleBet();
 }
 
 function getOutcome() {
   if (playerTotal > dealerTotal) {
+    if (handStatus === 'PBJ') {
+      msgEl.innerHTML = `<span>Dealer: Winner winner, Chicken dinner! You got a Blackjack this hand!</span>`;
+    } else {
     handStatus = 'P';
-    msgEl.innerHTML = '<span>Dealer: You won this hand!</span>';
+    msgEl.innerHTML = `<span>Dealer: You won this hand! ${playerTotal} beats ${dealerTotal}.</span>`;
+    }
   } else if (dealerTotal > playerTotal) {
+    if (handStatus === 'DBJ') {
+      msgEl.innerHTML = `<span>Dealer: Sorry! I got a Blackjack this hand!</span>`;
+    } else {    
     handStatus = 'D';
-    msgEl.innerHTML = '<span>Dealer: I won this hand!</span>';
+    msgEl.innerHTML = `<span>Dealer: I won this hand! ${dealerTotal} beats ${playerTotal}.</span>`;
+    }
   } else if (dealerTotal === playerTotal) {
     handStatus = 'T';
-    msgEl.innerHTML = '<span>Dealer: This hand is a push!</span>';
+    msgEl.innerHTML = `<span>Dealer: This hand is a push! We both got ${playerTotal}.</span>`;
   } else {
     handStatus = null;
   }
-  bankCalculation();
+  settleBet();
   return handStatus;
 }
 
-function bankCalculation () {
-  
+function settleBet() {
   if (handStatus === 'D') {
     playerBankResultEl.innerHTML = `<span>You lost $${betAmount} this hand!</span>`;
     playerBank -= betAmount;
@@ -265,8 +286,15 @@ function bankCalculation () {
     playerBankResultEl.innerHTML = `<span>You won $${betAmount} this hand!</span>`;
     playerBank += betAmount;
   } else if (handStatus === 'T') {
-    playerBankResultEl.innerHTML = `<span>You pushed the last hand, no money lost or won!</span>`;
+    playerBankResultEl.innerHTML = `<span>No money lost or won!</span>`;
     playerBank;
+  } else if (handStatus === 'PBJ') {
+    let blackjackPayout = betAmount * ODDS_PAYOUT;
+    playerBankResultEl.innerHTML = `<span>You won $${blackjackPayout} this hand!</span>`;
+    playerBank += blackjackPayout;
+  } else if (handStatus === 'DBJ') {
+    playerBankResultEl.innerHTML = `<span>You lost $${betAmount} this hand!</span>`;
+    playerBank -= betAmount;
   } else {
     return;
   }
@@ -276,7 +304,7 @@ function bankCalculation () {
 
 function checkEmptyBank() {
   if (playerBank < 10) {
-    msgEl.innerText = 'sorry you need at least $10 to play a hand. We do have an ATM if you would like to make a withdrawl.';
+    msgEl.innerText = 'Dealer: Sorry you need at least $10 to play a hand. We do have an ATM if you would like to make a withdrawl.';
     // message pops up asking if they want to keep playing, if no then display a game over page, if yes deposit INITIAL_BANK into playerBank
   } else return;
 }
@@ -293,7 +321,14 @@ function handleBetAmount(evt) {
   let chipId = evt.target.id;
   if (chipId in CHIPS) {
     betAmount += CHIPS[chipId];
+    if (betAmount > playerBank) {
+      // dont allow
+      msgEl.innerText = `Dealer: You cannot bet more than what you have in your Bank.`;
+      betAmount = playerBank;
+      currentBetEl.innerText = `${betAmount}`;
+    } else {
     currentBetEl.innerText = `${betAmount}`;
+    }
   } 
 }
 
@@ -304,7 +339,7 @@ function handleSubtractBetAmount(evt) {
     betAmount -= CHIPS[chipId];
     if (betAmount < MINIMUM_BET) {
       // dont allow
-      console.log(`you cannot bet less than $${MINIMUM_BET}`);
+      msgEl.innerText = `Dealer: You cannot bet less than $${MINIMUM_BET}.`;
       betAmount = MINIMUM_BET; 
       currentBetEl.innerText = `${betAmount}`;
     } else {

@@ -120,6 +120,8 @@ body {
   width: 20vw;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  font-size: 3.5vh;
 }
 
 .game-buttons {
