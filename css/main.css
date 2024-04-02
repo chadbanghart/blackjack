@@ -93,6 +93,26 @@ body {
 
 }
 
+#hidden-button {
+  grid-row: 2 / 3;
+  grid-column: 1 / 2;
+  display: flex;
+  visibility: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
+#hidden-button button {
+  width: 8vw;
+  height: 8vh;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: grey;
+  font-weight: 800;
+  border: 2px solid black;
+  border-radius: 10%;
+}
+
 .player-bank {
   grid-column: 1 / 2;
   grid-row: 3 / 4;

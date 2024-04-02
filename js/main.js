@@ -41,6 +41,7 @@ const minBetEl = document.getElementById('min-bet');
 const playerBankTextEl = document.getElementById('bank-value-text');
 const playerBankResultEl = document.getElementById('bank-text');
 const betBtnEls = document.querySelector('.bet-buttons');
+const hiddenBtn = document.getElementById('hidden-button');
 
   /*----- event listeners -----*/
 dealBtn.addEventListener('click', renderDeal);
@@ -49,6 +50,7 @@ standBtn.addEventListener('click', playerStand);
 doubleDownBtn.addEventListener('click', playerDoubleDown);
 betBtnEls.addEventListener('click', handleBetAmount);
 betBtnEls.addEventListener('contextmenu', handleSubtractBetAmount);
+hiddenBtn.addEventListener('click', init);
 
  
 
@@ -68,10 +70,14 @@ function init() {
   betAmount = MINIMUM_BET;
   playerBank = INITIAL_PLAYER_BANK;
   playerBusted = false;
+  renderCardsInContainer(playerHand, playerHandContainer);
+  renderCardsInContainer(dealerHand, dealerHandContainer);
+  hiddenBtn.style.visibility = 'hidden';
   minBetEl.innerText = `Minimum Bet: $${MINIMUM_BET}`;
   blackjackOddsEl.innerText = `Blackjack Pays ${ODDS_PAYOUT}x`;
   msgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount by clicking the chips, then click Deal to begin!</span>';
   currentBetEl.innerText = `${MINIMUM_BET}`;
+  playerBankResultEl.innerText = '';
   render();
 }
 
@@ -91,6 +97,8 @@ function renderControls() {
     hitBtn.style.visibility = 'hidden';
     standBtn.style.visibility = 'hidden';
     doubleDownBtn.style.visibility = 'hidden';
+    betBtnEls.style.visibility = 'visible';
+    dealBtn.style.visibility = 'visible';
     return;
   }
 
@@ -121,6 +129,12 @@ function renderControls() {
     hitBtn.style.visibility = 'hidden';
     standBtn.style.visibility = 'hidden';
     doubleDownBtn.style.visibility = 'hidden';
+  }
+
+  // player out of money hide all buttons
+  if (playerBank < MINIMUM_BET) {
+    betBtnEls.style.visibility = 'hidden';
+    dealBtn.style.visibility = 'hidden';
   }
 
 }
@@ -349,14 +363,14 @@ function settleBet() {
   } else {
     return;
   }
-  render();
+  renderMessage();
   return playerBank;
 }
 
 function checkEmptyBank() {
   if (playerBank < 10) {
     msgEl.innerText = 'Dealer: Sorry you need at least $10 to play a hand. We do have an ATM if you would like to make a withdrawl.';
-    // message pops up asking if they want to keep playing, if no then display a game over page, if yes deposit INITIAL_BANK into playerBank
+    hiddenBtn.style.visibility = 'visible';
   } else return;
 }
 
