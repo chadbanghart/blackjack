@@ -24,6 +24,7 @@ let dealerTotal;
 let playerBusted;
 let dealIsClicked;
 let isDealerTurn;
+let initRunning;
 
   /*----- cached elements  -----*/
 const dealBtn = document.getElementById('deal');
@@ -57,6 +58,7 @@ init();
 
 function init() {
   handStatus = null;
+  initRunning = true;
   dealIsClicked = false;
   isDealerTurn = false;
   shuffledDeck = getNewShuffledDeck();
@@ -74,13 +76,8 @@ function init() {
 }
 
 function render() {
-    renderHands();
     renderMessage();
     renderControls();
-}
-
-function renderHands () {
-
 }
 
 function renderMessage() {
@@ -89,7 +86,15 @@ function renderMessage() {
 }
 
 function renderControls() {
-  // Deal & Bet Btns only avail on init() & when handStatus is truthy
+  // on page load only deal and wager buttons should be available
+  if (initRunning) {
+    hitBtn.style.visibility = 'hidden';
+    standBtn.style.visibility = 'hidden';
+    doubleDownBtn.style.visibility = 'hidden';
+    return;
+  }
+
+  // Deal & Bet Btns only available on init() & when handStatus is truthy
   if (!dealIsClicked || handStatus) {
     betBtnEls.style.visibility = 'visible';
     dealBtn.style.visibility = 'visible';
@@ -98,10 +103,10 @@ function renderControls() {
     dealBtn.style.visibility = 'hidden';
   }
 
-  // DD only avail when playerHand.length = 2
+  // DD only available prior to any other action after deal
   doubleDownBtn.style.visibility = playerHand.length < 3 ? 'visible' : 'hidden';
 
-  // Hit and Stand only avail after deal and before dealerPlay()
+  // Hit and Stand only available after deal and before the dealer turn starts
   if (!isDealerTurn) {
     hitBtn.style.visibility = 'visible';
     standBtn.style.visibility = 'visible';
@@ -111,13 +116,13 @@ function renderControls() {
     doubleDownBtn.style.visibility = 'hidden';
   }
 
+  // on bust or blackjack only deal and wager btns are available
   if (playerBusted || handStatus === 'PBJ' || handStatus === 'DBJ') {
     hitBtn.style.visibility = 'hidden';
     standBtn.style.visibility = 'hidden';
     doubleDownBtn.style.visibility = 'hidden';
   }
 
-  // if blackjack. only deal and wager is avail
 }
 
 function buildOriginalDeck() {
@@ -153,6 +158,7 @@ function renderDeal() {
   handStatus = null;
   dealIsClicked = true;
   isDealerTurn = false;
+  initRunning = false;
   msgEl.innerHTML = '';
   playerBankResultEl.innerHTML = '';
   playerBusted = false;
