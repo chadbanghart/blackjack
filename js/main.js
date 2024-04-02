@@ -22,6 +22,8 @@ let playerBank;
 let playerTotal;
 let dealerTotal;
 let playerBusted;
+let dealIsClicked;
+let isDealerTurn;
 
   /*----- cached elements  -----*/
 const dealBtn = document.getElementById('deal');
@@ -37,14 +39,15 @@ const blackjackOddsEl = document.getElementById('bj-odds');
 const minBetEl = document.getElementById('min-bet');
 const playerBankTextEl = document.getElementById('bank-value-text');
 const playerBankResultEl = document.getElementById('bank-text');
+const betBtnEls = document.querySelector('.bet-buttons');
 
   /*----- event listeners -----*/
 dealBtn.addEventListener('click', renderDeal);
 hitBtn.addEventListener('click', playerHit);
 standBtn.addEventListener('click', playerStand);
 doubleDownBtn.addEventListener('click', playerDoubleDown);
-document.querySelector('.bet-buttons').addEventListener('click', handleBetAmount);
-document.querySelector('.bet-buttons').addEventListener('contextmenu', handleSubtractBetAmount);
+betBtnEls.addEventListener('click', handleBetAmount);
+betBtnEls.addEventListener('contextmenu', handleSubtractBetAmount);
 
  
 
@@ -54,6 +57,8 @@ init();
 
 function init() {
   handStatus = null;
+  dealIsClicked = false;
+  isDealerTurn = false;
   shuffledDeck = getNewShuffledDeck();
   playerHand = [];
   dealerHand = [];
@@ -84,7 +89,35 @@ function renderMessage() {
 }
 
 function renderControls() {
-  // hide buttons
+  // Deal & Bet Btns only avail on init() & when handStatus is truthy
+  if (!dealIsClicked || handStatus) {
+    betBtnEls.style.visibility = 'visible';
+    dealBtn.style.visibility = 'visible';
+  } else {
+    betBtnEls.style.visibility = 'hidden';
+    dealBtn.style.visibility = 'hidden';
+  }
+
+  // DD only avail when playerHand.length = 2
+  doubleDownBtn.style.visibility = playerHand.length < 3 ? 'visible' : 'hidden';
+
+  // Hit and Stand only avail after deal and before dealerPlay()
+  if (!isDealerTurn) {
+    hitBtn.style.visibility = 'visible';
+    standBtn.style.visibility = 'visible';
+  } else {
+    hitBtn.style.visibility = 'hidden';
+    standBtn.style.visibility = 'hidden';
+    doubleDownBtn.style.visibility = 'hidden';
+  }
+
+  if (playerBusted || handStatus === 'PBJ' || handStatus === 'DBJ') {
+    hitBtn.style.visibility = 'hidden';
+    standBtn.style.visibility = 'hidden';
+    doubleDownBtn.style.visibility = 'hidden';
+  }
+
+  // if blackjack. only deal and wager is avail
 }
 
 function buildOriginalDeck() {
@@ -118,6 +151,8 @@ function getNewShuffledDeck() {
 
 function renderDeal() {
   handStatus = null;
+  dealIsClicked = true;
+  isDealerTurn = false;
   msgEl.innerHTML = '';
   playerBankResultEl.innerHTML = '';
   playerBusted = false;
@@ -138,6 +173,7 @@ function renderDeal() {
     handStatus = 'PBJ'
   }
   if (handStatus) getOutcome();
+  render();
 }
 
 function renderCardsInContainer(hand, container) {
@@ -193,12 +229,14 @@ function playerHit() {
   playerHand.push(shuffledDeck.shift());
   renderCardsInContainer(playerHand, playerHandContainer);
   checkForPlayerBust(playerTotal);
+  renderControls();
   }
 
 function playerStand() {
   playerTotal = calculateHandTotal(playerHand, playerTotal);
   // disable buttons
   dealerPlay();
+  renderControls();
 }
 
 function playerDoubleDown() {
@@ -214,18 +252,21 @@ function playerDoubleDown() {
     playerBust();
   } else {
   playerStand();
-  }  
+  }
+  renderControls();  
 }
 
 function playerBust() {
     msgEl.innerHTML = '<span>Dealer: Tough break, you Busted! I win this hand!</span>';
     handStatus = 'D';
     settleBet();
+    renderControls();
     // end play. player must deal again
     return;
   }; 
 
 function dealerPlay() {
+  isDealerTurn = true;
   dealerTotal = calculateHandTotal(dealerHand);
   renderCardsInContainer(dealerHand, dealerHandContainer);
   if (dealerTotal < 17) {
@@ -256,7 +297,8 @@ function dealerBust() {
 function getOutcome() {
   if (playerTotal > dealerTotal) {
     if (handStatus === 'PBJ') {
-      msgEl.innerHTML = `<span>Dealer: Winner winner, Chicken dinner! You got a Blackjack this hand!</span>`;
+      msgEl.innerHTML = `<span>Dealer: Winner Winner, Chicken Dinner! You got a Blackjack this hand!</span>`;
+      renderControls();
     } else {
     handStatus = 'P';
     msgEl.innerHTML = `<span>Dealer: You won this hand! ${playerTotal} beats ${dealerTotal}.</span>`;
@@ -264,6 +306,8 @@ function getOutcome() {
   } else if (dealerTotal > playerTotal) {
     if (handStatus === 'DBJ') {
       msgEl.innerHTML = `<span>Dealer: Sorry! I got a Blackjack this hand!</span>`;
+      renderCardsInContainer(dealerHand, dealerHandContainer);
+      renderControls();
     } else {    
     handStatus = 'D';
     msgEl.innerHTML = `<span>Dealer: I won this hand! ${dealerTotal} beats ${playerTotal}.</span>`;
@@ -271,6 +315,7 @@ function getOutcome() {
   } else if (dealerTotal === playerTotal) {
     handStatus = 'T';
     msgEl.innerHTML = `<span>Dealer: This hand is a push! We both got ${playerTotal}.</span>`;
+
   } else {
     handStatus = null;
   }
@@ -313,6 +358,7 @@ function checkLegalBetAmount() {
   if (betAmount > playerBank) {
     msgEl.innerText = `Dealer: You cannot bet more than what you have in your bank! The max you can bet right now is $${playerBank}.`;
     betAmount = playerBank;
+    currentBetEl.innerText = `${betAmount}`;
     // stop deal from happening until they input a legal bet or set bet amount to playerBank
   }
 }
