@@ -178,6 +178,7 @@ function renderDeal() {
   playerBusted = false;
   currentBetEl.innerText = `${betAmount}`;
   checkLegalBetAmount();
+  playerBank -= betAmount;
   shuffledDeck = getNewShuffledDeck();
   playerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
   dealerHand = [shuffledDeck.shift(), shuffledDeck.shift()];
@@ -254,7 +255,6 @@ function playerHit() {
 
 function playerStand() {
   playerTotal = calculateHandTotal(playerHand, playerTotal);
-  // disable buttons
   dealerPlay();
   renderControls();
 }
@@ -281,7 +281,6 @@ function playerBust() {
     handStatus = 'D';
     settleBet();
     renderControls();
-    // end play. player must deal again
     return;
   }; 
 
@@ -346,20 +345,18 @@ function getOutcome() {
 function settleBet() {
   if (handStatus === 'D') {
     playerBankResultEl.innerHTML = `<span>You lost $${betAmount} this hand!</span>`;
-    playerBank -= betAmount;
   } else if (handStatus === 'P') {
     playerBankResultEl.innerHTML = `<span>You won $${betAmount} this hand!</span>`;
-    playerBank += betAmount;
+    playerBank += betAmount * 2;
   } else if (handStatus === 'T') {
     playerBankResultEl.innerHTML = `<span>No money lost or won!</span>`;
-    playerBank;
+    playerBank += betAmount;
   } else if (handStatus === 'PBJ') {
-    let blackjackPayout = betAmount * ODDS_PAYOUT;
-    playerBankResultEl.innerHTML = `<span>You won $${blackjackPayout} this hand!</span>`;
+    let blackjackPayout = betAmount + (betAmount * ODDS_PAYOUT);
+    playerBankResultEl.innerHTML = `<span>You won $${blackjackPayout - betAmount} this hand!</span>`;
     playerBank += blackjackPayout;
   } else if (handStatus === 'DBJ') {
     playerBankResultEl.innerHTML = `<span>You lost $${betAmount} this hand!</span>`;
-    playerBank -= betAmount;
   } else {
     return;
   }
@@ -379,7 +376,6 @@ function checkLegalBetAmount() {
     msgEl.innerText = `Dealer: You cannot bet more than what you have in your bank! The max you can bet right now is $${playerBank}.`;
     betAmount = playerBank;
     currentBetEl.innerText = `${betAmount}`;
-    // stop deal from happening until they input a legal bet or set bet amount to playerBank
   }
 }
 
@@ -388,7 +384,6 @@ function handleBetAmount(evt) {
   if (chipId in CHIPS) {
     betAmount += CHIPS[chipId];
     if (betAmount > playerBank) {
-      // dont allow
       msgEl.innerText = `Dealer: You cannot bet more than what you have in your Bank.`;
       betAmount = playerBank;
       currentBetEl.innerText = `${betAmount}`;
@@ -404,7 +399,6 @@ function handleSubtractBetAmount(evt) {
   if (chipId in CHIPS) {
     betAmount -= CHIPS[chipId];
     if (betAmount < MINIMUM_BET) {
-      // dont allow
       msgEl.innerText = `Dealer: You cannot bet less than $${MINIMUM_BET}.`;
       betAmount = MINIMUM_BET; 
       currentBetEl.innerText = `${betAmount}`;
