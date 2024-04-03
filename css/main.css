@@ -232,3 +232,9 @@ body {
 #chip-100 {
   background-color: black;
 }
+
+button:disabled {
+  opacity: 50%;
+  background-color: grey;
+  cursor: default;
+}

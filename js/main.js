@@ -94,47 +94,47 @@ function renderMessage() {
 function renderControls() {
   // on page load only deal and wager buttons should be available
   if (initRunning) {
-    hitBtn.style.visibility = 'hidden';
-    standBtn.style.visibility = 'hidden';
-    doubleDownBtn.style.visibility = 'hidden';
+    hitBtn.disabled = true;
+    standBtn.disabled = true;
+    doubleDownBtn.disabled = true;
     betBtnEls.style.visibility = 'visible';
-    dealBtn.style.visibility = 'visible';
+    dealBtn.disabled = false;
     return;
   }
 
   // Deal & Bet Btns only available on init() & when handStatus is truthy
   if (!dealIsClicked || handStatus) {
     betBtnEls.style.visibility = 'visible';
-    dealBtn.style.visibility = 'visible';
+    dealBtn.disabled = false;
   } else {
     betBtnEls.style.visibility = 'hidden';
-    dealBtn.style.visibility = 'hidden';
+    dealBtn.disabled = true;
   }
 
   // DD only available prior to any other action after deal
-  doubleDownBtn.style.visibility = playerHand.length < 3 ? 'visible' : 'hidden';
+  doubleDownBtn.disabled = playerHand.length < 3 ? false : true;
 
   // Hit and Stand only available after deal and before the dealer turn starts
   if (!isDealerTurn) {
-    hitBtn.style.visibility = 'visible';
-    standBtn.style.visibility = 'visible';
+    hitBtn.disabled = false;
+    standBtn.disabled = false;
   } else {
-    hitBtn.style.visibility = 'hidden';
-    standBtn.style.visibility = 'hidden';
-    doubleDownBtn.style.visibility = 'hidden';
+    hitBtn.disabled = true;
+    standBtn.disabled = true;
+    doubleDownBtn.disabled = true;
   }
 
   // on bust or blackjack only deal and wager btns are available
   if (playerBusted || handStatus === 'PBJ' || handStatus === 'DBJ') {
-    hitBtn.style.visibility = 'hidden';
-    standBtn.style.visibility = 'hidden';
-    doubleDownBtn.style.visibility = 'hidden';
+    hitBtn.disabled = true;
+    standBtn.disabled = true;
+    doubleDownBtn.disabled = true;
   }
 
   // player out of money hide all buttons
   if (playerBank < MINIMUM_BET) {
     betBtnEls.style.visibility = 'hidden';
-    dealBtn.style.visibility = 'hidden';
+    dealBtn.disabled = true;
   }
 
 }
