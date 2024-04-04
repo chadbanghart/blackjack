@@ -13,7 +13,7 @@ const CHIPS = {
 };
   /*----- state variables -----*/
   
-let handStatus; // null (in progress), PBJ, DBJ, D, P, T
+let handStatus;
 let shuffledDeck;
 let playerHand;
 let dealerHand;
@@ -62,7 +62,6 @@ function init() {
   playerTotal = dealerTotal = 0;
   betAmount = MINIMUM_BET;
   playerBank = INITIAL_PLAYER_BANK;
-  hiddenBtn.style.visibility = 'hidden'; // add this to renderControls
   minBetEl.innerText = `Minimum Bet: $${MINIMUM_BET}`;
   blackjackOddsEl.innerText = `Blackjack Pays ${ODDS_PAYOUT}x`;
   dealerMsgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount by clicking the chips, then click Deal to begin!</span>';
@@ -84,7 +83,7 @@ function renderHands() {
 
 function renderMessage() {
   playerBankTextEl.innerText = `${playerBank}`;
-  checkEmptyBank();
+  if (playerBank < 10 && handStatus) dealerMsgEl.innerText = 'Dealer: Sorry you need at least $10 to play a hand. We do have an ATM if you would like to make a withdrawl.';
 }
 
 function renderControls() {
@@ -94,6 +93,7 @@ function renderControls() {
   betBtnEls.style.visibility = handStatus && playerBank >= 10 ? 'visible' : 'hidden';
   betInsEl.style.visibility = handStatus && playerBank >= 10 ? 'visible' : 'hidden';
   dealBtn.disabled = !handStatus || playerBank < 10;
+  hiddenBtn.style.visibility = playerBank < 10 && handStatus ? 'visible' : 'hidden';
 }
 
 function buildOriginalDeck() {
@@ -258,13 +258,6 @@ function settleBet() {
     playerBankResultEl.innerHTML = `<span>You lost $${betAmount} this hand!</span>`;
   } 
   render();
-}
-
-function checkEmptyBank() {
-  if (playerBank < 10 && handStatus) {
-    dealerMsgEl.innerText = 'Dealer: Sorry you need at least $10 to play a hand. We do have an ATM if you would like to make a withdrawl.';
-    hiddenBtn.style.visibility = 'visible';
-  } else return;
 }
 
 function checkLegalBetAmount() {
