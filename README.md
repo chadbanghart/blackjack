@@ -19,11 +19,12 @@
 
 
   ## Getting Started
-  Have fun playing my game of [Blackjack](https://chadbanghart.github.io/blackjack/)
-  [click here](planning/) to see my project planning
+  Have fun playing my game of [**Blackjack**](https://chadbanghart.github.io/blackjack/)!
+
+  [**click here**](planning/) to see my project planning.
 
   #### How to play Blackjack
-  For a step-by-step detail of how to play Blackjack, you can [click here!](https://www.blackjackapprenticeship.com/how-to-play-blackjack/)
+  For a step-by-step detail of how to play _Blackjack_, you can [**click here!**](https://www.blackjackapprenticeship.com/how-to-play-blackjack/)
   
   ##### Table Rules
   * This table pays out a blackjack at 3/2 odds.
