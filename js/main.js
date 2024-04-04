@@ -13,7 +13,7 @@ const CHIPS = {
 };
   /*----- state variables -----*/
   
-let handStatus;
+let handStatus; // null (in progress), PBJ, DBJ, D, P, T
 let shuffledDeck;
 let playerHand;
 let dealerHand;
@@ -21,20 +21,15 @@ let betAmount;
 let playerBank;
 let playerTotal;
 let dealerTotal;
-let playerBusted;
-let dealIsClicked;
-let isDealerTurn;
-let initRunning;
 
   /*----- cached elements  -----*/
 const dealBtn = document.getElementById('deal');
 const hitBtn = document.getElementById('hit');
 const standBtn = document.getElementById('stand');
 const doubleDownBtn = document.getElementById('dd');
-const betBtns = [ ...document.querySelectorAll('.bet-buttons > button') ];
 const playerHandContainer = document.getElementById('player-container');
 const dealerHandContainer = document.getElementById('dealer-container');
-const dealerMsgEl = document.querySelector('.dealer-message');
+const dealerMsgEl = document.querySelector('#dealer-message');
 const currentBetEl = document.getElementById('current-bet');
 const blackjackOddsEl = document.getElementById('bj-odds');
 const minBetEl = document.getElementById('min-bet');
@@ -49,8 +44,8 @@ dealBtn.addEventListener('click', handleDeal);
 hitBtn.addEventListener('click', playerHit);
 standBtn.addEventListener('click', playerStand);
 doubleDownBtn.addEventListener('click', playerDoubleDown);
-betBtnEls.addEventListener('click', handleBetAmount);
-betBtnEls.addEventListener('contextmenu', handleSubtractBetAmount);
+betBtnEls.addEventListener('click', (evt) => handleBetAmount(evt, false));
+betBtnEls.addEventListener('contextmenu', (evt) => handleBetAmount(evt, true));
 hiddenBtn.addEventListener('click', init);
 
  
@@ -60,53 +55,31 @@ init();
 
 
 function init() {
-  handStatus = null;
-  initRunning = true;
-  dealIsClicked = false;
-  isDealerTurn = false;
+  handStatus = 'P';
   shuffledDeck = getNewShuffledDeck();
   playerHand = [];
   dealerHand = [];
   playerTotal = dealerTotal = 0;
   betAmount = MINIMUM_BET;
   playerBank = INITIAL_PLAYER_BANK;
-  playerBusted = false;
-  hiddenBtn.style.visibility = 'hidden';
+  hiddenBtn.style.visibility = 'hidden'; // add this to renderControls
   minBetEl.innerText = `Minimum Bet: $${MINIMUM_BET}`;
   blackjackOddsEl.innerText = `Blackjack Pays ${ODDS_PAYOUT}x`;
   dealerMsgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount by clicking the chips, then click Deal to begin!</span>';
-  currentBetEl.innerText = `${MINIMUM_BET}`;
   playerBankResultEl.innerText = '';
   render();
 }
 
 function render() {
-    renderHands();
-    renderMessage();
-    renderControls();
+  renderHands();
+  renderMessage();
+  renderControls();
+  currentBetEl.innerText = `${betAmount}`;
 }
 
 function renderHands() {
-  if (initRunning) {
-    renderCardsInContainer(playerHand, playerHandContainer);
-    renderCardsInContainer(dealerHand, dealerHandContainer);
-  }
-  if (dealIsClicked) {
-    renderCardsInContainer(playerHand, playerHandContainer);
-    renderDealerCardsOnDealInContainer(dealerHand, dealerHandContainer);
-  } 
-  if (isDealerTurn) {
-    renderCardsInContainer(dealerHand, dealerHandContainer);
-  }
-  if (handStatus) {
-    renderCardsInContainer(playerHand, playerHandContainer);
-    renderCardsInContainer(dealerHand, dealerHandContainer);
-  }
-  if (playerBusted) {
-    renderCardsInContainer(playerHand, playerHandContainer);
-    renderCardsInContainer(dealerHand, dealerHandContainer);
-  }
-
+  renderCardsInContainer(playerHand, playerHandContainer);
+  renderCardsInContainer(dealerHand, dealerHandContainer);
 }
 
 function renderMessage() {
@@ -115,54 +88,12 @@ function renderMessage() {
 }
 
 function renderControls() {
-  // on page load only deal and wager buttons should be available
-  if (initRunning) {
-    hitBtn.disabled = true;
-    standBtn.disabled = true;
-    doubleDownBtn.disabled = true;
-    betBtnEls.style.visibility = 'visible';
-    betInsEl.style.visibility = 'visible';
-    dealBtn.disabled = false;
-    return;
-  }
-
-  // Deal & Bet Btns only available on init() & when handStatus is truthy
-  if (!dealIsClicked || handStatus) {
-    betBtnEls.style.visibility = 'visible';
-    betInsEl.style.visibility = 'visible';
-    dealBtn.disabled = false;
-  } else {
-    betBtnEls.style.visibility = 'hidden';
-    betInsEl.style.visibility = 'hidden';
-    dealBtn.disabled = true;
-  }
-
-  // DD only available prior to any other action after deal
-  doubleDownBtn.disabled = playerHand.length < 3 ? false : true;
-
-  // Hit and Stand only available after deal and before the dealer turn starts
-  if (!isDealerTurn) {
-    hitBtn.disabled = false;
-    standBtn.disabled = false;
-  } else {
-    hitBtn.disabled = true;
-    standBtn.disabled = true;
-    doubleDownBtn.disabled = true;
-  }
-
-  // on bust or blackjack only deal and wager btns are available
-  if (playerBusted || handStatus === 'PBJ' || handStatus === 'DBJ') {
-    hitBtn.disabled = true;
-    standBtn.disabled = true;
-    doubleDownBtn.disabled = true;
-  }
-
-  // player out of money hide all buttons
-  if (playerBank < MINIMUM_BET) {
-    betBtnEls.style.visibility = 'hidden';
-    betInsEl.style.visibility = 'hidden';
-    dealBtn.disabled = true;
-  }
+  hitBtn.disabled = !!handStatus;
+  standBtn.disabled = !!handStatus;
+  doubleDownBtn.disabled = !!handStatus || playerHand.length !== 2 || playerBank < betAmount;
+  betBtnEls.style.visibility = handStatus && playerBank >= 10 ? 'visible' : 'hidden';
+  betInsEl.style.visibility = handStatus && playerBank >= 10 ? 'visible' : 'hidden';
+  dealBtn.disabled = !handStatus || playerBank < 10;
 }
 
 function buildOriginalDeck() {
@@ -195,13 +126,8 @@ function getNewShuffledDeck() {
 }
 
 function handleDeal() {
-  dealIsClicked = true;
   handStatus = null;
-  isDealerTurn = false;
-  initRunning = false;
-  playerBusted = false;
   dealerMsgEl.innerText = '';
-  currentBetEl.innerText = `${betAmount}`;
   playerBankResultEl.innerHTML = '';
   checkLegalBetAmount();
   playerBank -= betAmount;
@@ -222,126 +148,78 @@ function handleDeal() {
 }
 
 function renderCardsInContainer(hand, container) {
-  container.innerHTML = '';
   let cardsHtml = '';
-  hand.forEach(function(card) {
-    cardsHtml += `<div class="card large ${card.face}"></div>`;
-  });
-  container.innerHTML = cardsHtml;
-}
-
-function renderDealerCardsOnDealInContainer(hand, container) {
-  container.innerHTML = '';
-  let cardsHtml = '';
-  hand.forEach(function(card, index) {
-    if (index === 0) {
-      cardsHtml += `<div class="card large back-red"></div>`;
-    } else if (index === 1) {
-      cardsHtml += `<div class="card large ${card.face}"></div>`;
-    }
+  hand.forEach(function(card, idx) {
+  const cardClass = !handStatus && idx === 0 && hand === dealerHand ? 'back-red' : card.face;
+    cardsHtml += `<div class="card large ${cardClass}"></div>`;
   });
   container.innerHTML = cardsHtml;
 }
   
-function calculateHandTotal(hand, player) {
+function calculateHandTotal(hand) {
   let handTotal = 0;
-  player;
   let aces = 0;
   hand.forEach(card => {
     handTotal += card.value;
-    if (card.value === 11) {
-      aces += 1;
-    }
+    if (card.value === 11) aces++;
   });
-    while (handTotal > 21 && aces > 0) {
-      handTotal -= 10;
-      aces -= 1;
-    }
-  player = handTotal;
+  while (handTotal > 21 && aces > 0) {
+    handTotal -= 10;
+    aces -= 1;
+  }
   return handTotal;
 }
 
-function checkForPlayerBust(handTotal) {
-  handTotal = calculateHandTotal(playerHand, playerTotal);
-  if (handTotal > 21) {
-    playerBusted = true;
-    playerBust();
-  }
-}
-  
 function playerHit() {
-  calculateHandTotal(playerHand, playerTotal);
   playerHand.push(shuffledDeck.shift());
-  checkForPlayerBust(playerTotal);
+  playerTotal = calculateHandTotal(playerHand);
+  if (playerTotal > 21) playerBust();
   render();
-  }
+}
 
 function playerStand() {
-  playerTotal = calculateHandTotal(playerHand, playerTotal);
+  playerTotal = calculateHandTotal(playerHand);
   dealerPlay();
   render();
 }
 
 function playerDoubleDown() {
-  if (betAmount > playerBank) {
-    dealerMsgEl.innerText = 'Dealer: You do not have enough money to double down. your bet will not be doubled, but I have given you a standard hit and you can resume playing.';
-    playerHit();
-    return;
-  }
   playerBank -= betAmount;
   betAmount *= 2;
-  currentBetEl.innerText = `${betAmount}`;
   playerHit();
-  if (playerBusted) {
-    playerBust();
-  } else {
-  playerStand();
-  }
+  if (playerTotal <= 21) playerStand();
   render();  
 }
 
 function playerBust() {
-    dealerMsgEl.innerHTML = '<span>Dealer: Tough break, you Busted! I win this hand!</span>';
-    handStatus = 'D';
-    settleBet();
-    render();
-    return;
-  }; 
+  dealerMsgEl.innerHTML = '<span>Dealer: Tough break, you Busted! I win this hand!</span>';
+  handStatus = 'D';
+  settleBet();
+  render();
+}
 
 function dealerPlay() {
-  isDealerTurn = true;
-  dealerTotal = calculateHandTotal(dealerHand);
-  render();
-  if (dealerTotal < 17) {
-    dealerHit();
-  } else if (dealerTotal >= 17 && dealerTotal <= 21) {
-    dealerStand();
+  while (dealerTotal < 17) {
+    dealerHand.push(shuffledDeck.shift());
+    dealerTotal = calculateHandTotal(dealerHand);
+  }
+  if (dealerTotal <= 21) {
+    getOutcome();
   } else {
     dealerBust();
   }
 }
 
-function dealerHit() {
-  dealerHand.push(shuffledDeck.shift());
-  dealerPlay();
-}
-
-function dealerStand() {
-  getOutcome();
-}
-
 function dealerBust() {
   dealerMsgEl.innerHTML = '<span>Dealer: Ah, I Busted! You win this hand!</span>';
-  handStatus = 'P'
+  handStatus = 'P';
   settleBet();
-  render();
 }
 
 function getOutcome() {
   if (playerTotal > dealerTotal) {
     if (handStatus === 'PBJ') {
       dealerMsgEl.innerHTML = `<span>Dealer: Winner Winner, Chicken Dinner! You got a Blackjack this hand!</span>`;
-      render();
     } else {
     handStatus = 'P';
     dealerMsgEl.innerHTML = `<span>Dealer: You won this hand! ${playerTotal} beats ${dealerTotal}.</span>`;
@@ -349,7 +227,6 @@ function getOutcome() {
   } else if (dealerTotal > playerTotal) {
     if (handStatus === 'DBJ') {
       dealerMsgEl.innerHTML = `<span>Dealer: Sorry! I got a Blackjack this hand!</span>`;
-      render();
     } else {    
     handStatus = 'D';
     dealerMsgEl.innerHTML = `<span>Dealer: I won this hand! ${dealerTotal} beats ${playerTotal}.</span>`;
@@ -362,7 +239,6 @@ function getOutcome() {
     handStatus = null;
   }
   settleBet();
-  return handStatus;
 }
 
 function settleBet() {
@@ -380,11 +256,8 @@ function settleBet() {
     playerBank += blackjackPayout;
   } else if (handStatus === 'DBJ') {
     playerBankResultEl.innerHTML = `<span>You lost $${betAmount} this hand!</span>`;
-  } else {
-    return;
-  }
+  } 
   render();
-  return playerBank;
 }
 
 function checkEmptyBank() {
@@ -398,35 +271,22 @@ function checkLegalBetAmount() {
   if (betAmount > playerBank) {
     dealerMsgEl.innerText = `Dealer: You cannot bet more than what you have in your bank! The max you can bet right now is $${playerBank}. Your bet amount has been set to ${playerBank}`;
     betAmount = playerBank;
-    currentBetEl.innerText = `${betAmount}`;
+    render();
   }
 }
 
-function handleBetAmount(evt) {
-  let chipId = evt.target.id;
-  if (chipId in CHIPS) {
-    betAmount += CHIPS[chipId];
-    if (betAmount > playerBank) {
-      dealerMsgEl.innerText = `Dealer: You cannot bet more than what you have in your Bank.`;
-      betAmount = playerBank;
-      currentBetEl.innerText = `${betAmount}`;
-    } else {
-    currentBetEl.innerText = `${betAmount}`;
-    }
-  } 
-}
-
-function handleSubtractBetAmount(evt) {
+function handleBetAmount(evt, subtract) {
   evt.preventDefault();
   let chipId = evt.target.id;
   if (chipId in CHIPS) {
-    betAmount -= CHIPS[chipId];
-    if (betAmount < MINIMUM_BET) {
+    betAmount += subtract ? -CHIPS[chipId] : CHIPS[chipId];
+    if (betAmount > playerBank) {
+      dealerMsgEl.innerText = `Dealer: You cannot bet more than what you have in your Bank.`;
+      betAmount = playerBank;
+    } else if (betAmount < MINIMUM_BET) {
       dealerMsgEl.innerText = `Dealer: You cannot bet less than $${MINIMUM_BET}.`;
       betAmount = MINIMUM_BET; 
-      currentBetEl.innerText = `${betAmount}`;
-    } else {
-    currentBetEl.innerText = `${betAmount}`;
-    }
-  }
+    } 
+    render(); 
+  } 
 }

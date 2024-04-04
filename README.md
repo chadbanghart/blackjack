@@ -40,3 +40,4 @@
   * Implement delay to cards being dealt
   * Show chips in the pot stacking up based on current value of the pot
   * make dealer messages appear as if they are being typed
+  * make an ATM via CSS

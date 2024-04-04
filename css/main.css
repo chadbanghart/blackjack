@@ -24,7 +24,7 @@ body {
   background-color: green;
 }
 
-.dealer-message {
+#dealer-message {
   grid-column: 3 / 4;
   grid-row: 1 / 2;
   background-color: #ffffff;
