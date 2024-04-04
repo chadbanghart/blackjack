@@ -20,7 +20,7 @@
 
   ## Getting Started
   Have fun playing my game of [Blackjack](https://chadbanghart.github.io/blackjack/)
-  [click here] to see my project planning
+  [click here](planning/) to see my project planning
 
   #### How to play Blackjack
   For a step-by-step detail of how to play Blackjack, you can [click here!](https://www.blackjackapprenticeship.com/how-to-play-blackjack/)
