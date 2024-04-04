@@ -8,9 +8,8 @@
 
   ## Screenshots
   ![game on load](images/onLoad.png)
-  ![game on deal](images/dealHand.png)
-  ![hand result](images/dealerBust.png)
-  ![player blackjack](images/playerBlackjack.png)
+  ![game on deal](images/onDeal.png)
+  ![hand result](images/handResult.png)
 
   ## Technologies Used
   * Javascript
