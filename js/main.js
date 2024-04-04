@@ -42,6 +42,7 @@ const playerBankTextEl = document.getElementById('bank-value-text');
 const playerBankResultEl = document.getElementById('bank-text');
 const betBtnEls = document.querySelector('.bet-buttons');
 const hiddenBtn = document.getElementById('hidden-button');
+const betInsEl = document.getElementById('bet-instruction');
 
   /*----- event listeners -----*/
 dealBtn.addEventListener('click', handleDeal);
@@ -120,6 +121,7 @@ function renderControls() {
     standBtn.disabled = true;
     doubleDownBtn.disabled = true;
     betBtnEls.style.visibility = 'visible';
+    betInsEl.style.visibility = 'visible';
     dealBtn.disabled = false;
     return;
   }
@@ -127,9 +129,11 @@ function renderControls() {
   // Deal & Bet Btns only available on init() & when handStatus is truthy
   if (!dealIsClicked || handStatus) {
     betBtnEls.style.visibility = 'visible';
+    betInsEl.style.visibility = 'visible';
     dealBtn.disabled = false;
   } else {
     betBtnEls.style.visibility = 'hidden';
+    betInsEl.style.visibility = 'hidden';
     dealBtn.disabled = true;
   }
 
@@ -156,9 +160,9 @@ function renderControls() {
   // player out of money hide all buttons
   if (playerBank < MINIMUM_BET) {
     betBtnEls.style.visibility = 'hidden';
+    betInsEl.style.visibility = 'hidden';
     dealBtn.disabled = true;
   }
-
 }
 
 function buildOriginalDeck() {

@@ -1,52 +1,37 @@
 # Blackjack
 
-  #### Game Introduction
-  Blackjack is the most widely played casino card game in the world. First references of the game date all the way back to 1601!
-
-  ##### Table Rules
-  * This table pays out a blackjack at 3/2 odds. If a player gets a blackjack(21) on the draw, their bet gets paid out at 1.5x their bet.
-  * The minimum bet per hand is $10.
+  Blackjack is the most widely played casino card game in the world. Simply put, Blackjack is a game where the player is trying to beat the dealer by getting as close to 21 without going over (more info on how to play Blackjack below!). 
+  #### Some Fun Facts
+  * First references of the game date all the way back to 1601! 
+  * Most people would say Blackjack popularity took off in the US during WWI. 
+  * On average a single casino blacjack table profits $1,000 in one day...
 
   ## Screenshots
-  ![game on load](planning/images/onLoad.png)
-  ![game on deal](planning/images/dealHand.png)
-  ![hand result](planning/images/dealerBust.png)
-  ![player blackjack](planning/images/playerBlackjack.png)
+  ![game on load](images/onLoad.png)
+  ![game on deal](images/dealHand.png)
+  ![hand result](images/dealerBust.png)
+  ![player blackjack](images/playerBlackjack.png)
 
   ## Technologies Used
   * Javascript
   * HTML
   * CSS
+  * CardStarter CSS Library
 
 
   ## Getting Started
   Have fun playing my game of [Blackjack](https://chadbanghart.github.io/blackjack/)
+  [click here] to see my project planning
 
   #### How to play Blackjack
   For a step-by-step detail of how to play Blackjack, you can [click here!](https://www.blackjackapprenticeship.com/how-to-play-blackjack/)
-  Otherwise, here are my breif rules for the game!
-  Blackjack has a deck of 52 cards. In this deck there are 4 suits - hearts, diamonds, clubs, and spades. 
-  Each suit has a card ranging from 2-10 and then face cards of jack, queen, king, and ace.
-  Each card number is the value that card holds, the face cards - jack, queen, and king all equal 10, while the ace can equal 1 or 11.
-  In the game of blackjack there are two players. the player and the dealer.
-  The objective is to beat the dealer. In order to beat the dealer the player must either score higher than
-  the dealer or the dealer must bust. The player plays their turn first. the players goal is for the sum of 
-  their cards to get as close to 21 with out exceeding 21.
-  If the players total card values exceed 21, the player loses (busts).
-  To start a hand, the player must wager how much money they want to bet on the hand. Once the bet is placed, the hand is dealt.
-  Both the player and the dealer are dealt 2 cards, the dealer gets one of their cards face down.
-  the player now has the choice of either being dealt another card(hit) or stay with their hand as is(stand).
-  The player is allowed to hit until they decide to stand or until they bust.
-  If the player busts, the hand is over and they must bet again to play another hand.
+  
+  ##### Table Rules
+  * This table pays out a blackjack at 3/2 odds.
+  * The minimum bet per hand is $10.
 
-  ##### Dealer rules 
-  Once the player has completed their turn, it is now the dealers turn. The dealer must hit their hand until they have reached 17 or busted. 
-
-  ##### Other Plays
-  **Double Down** - the player has the option to do whats called a double down. A player can only double down when they have two cards in their hand. 
-  If a play doubles down, they double their bet, and then get hit one card. If they do not bust, then it is the computers turn. If a player wins on a 
-  double down they win 2x their initial bet and vice versa for a lose on a double down.
-
+  ##### Dealer Rules 
+  * The dealer must hit their hand until they have reached 17 or busted. 
 
   ## Next Steps
   **Icebox Items**

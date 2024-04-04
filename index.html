@@ -6,18 +6,21 @@
     <title>Blackjack</title>
     <link href="css/card-library/css/cardstarter.css" rel="stylesheet" type="text/css" />
     <link href="css/main.css" rel="stylesheet" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
     <script defer src="js/main.js"></script>
 </head>
 <body>
     <div class="game-container">
-        <div class="dealer-message">Dealer's message here</div>
-        <div class="card-container"></div>
+        <div class="dealer-message"></div>
+        <div class="card-container">
             <div id="dealer-container"></div>
             <div id="player-container"></div>
-        <div class="game-info">
-            <div id="bj-odds"></div>
-            <div id="min-bet"></div>
         </div>
+        <div id="bj-odds"></div>
+        <div id="min-bet"></div>
+        
         <div class="player-bank">
             <div id="bank-value">Player Bank: $<span id="bank-value-text"></span></div>
             <div id="bank-text"></div>
@@ -30,7 +33,7 @@
         </div>
         <div class="bet-amount">
             <div id="wager">My Wager: $<span id="current-bet"></span></div>
-            <div id="bet-instruction">Left click on the chip to add or right click on the chip to subtract the given amount to your wager</div>
+            <div id="bet-instruction">Left click on the chip to add <br>Right click on the chip to subtract</div>
             <div class="bet-buttons">
                 <button id="chip-5">$5</button>
                 <button id="chip-10">$10</button>
