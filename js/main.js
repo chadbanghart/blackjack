@@ -36,7 +36,8 @@ const minBetEl = document.getElementById('min-bet');
 const playerBankTextEl = document.getElementById('bank-value-text');
 const playerBankResultEl = document.getElementById('bank-text');
 const betBtnEls = document.querySelector('.bet-buttons');
-const hiddenBtn = document.getElementById('hidden-button');
+const hiddenBtn = document.getElementById('start-over');
+const hiddenBtnEls = document.querySelector('.hidden-button');
 const betInsEl = document.getElementById('bet-instruction');
 
   /*----- event listeners -----*/
@@ -64,7 +65,7 @@ function init() {
   playerBank = INITIAL_PLAYER_BANK;
   minBetEl.innerText = `Minimum Bet: $${MINIMUM_BET}`;
   blackjackOddsEl.innerText = `Blackjack Pays ${ODDS_PAYOUT}x`;
-  dealerMsgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount by clicking the chips, then click Deal to begin!</span>';
+  dealerMsgEl.innerHTML = '<span>Dealer: Welcome to the game of Blackjack. First input your bet amount by clicking the chips, to make your bet official and start the hand, click Deal!</span>';
   playerBankResultEl.innerText = '';
   render();
 }
@@ -93,7 +94,7 @@ function renderControls() {
   betBtnEls.style.visibility = handStatus && playerBank >= 10 ? 'visible' : 'hidden';
   betInsEl.style.visibility = handStatus && playerBank >= 10 ? 'visible' : 'hidden';
   dealBtn.disabled = !handStatus || playerBank < 10;
-  hiddenBtn.style.visibility = playerBank < 10 && handStatus ? 'visible' : 'hidden';
+  hiddenBtnEls.style.visibility = playerBank < 10 && handStatus ? 'visible' : 'hidden';
 }
 
 function buildOriginalDeck() {
@@ -150,7 +151,7 @@ function handleDeal() {
 function renderCardsInContainer(hand, container) {
   let cardsHtml = '';
   hand.forEach(function(card, idx) {
-  const cardClass = !handStatus && idx === 0 && hand === dealerHand ? 'back-red' : card.face;
+    const cardClass = !handStatus && idx === 0 && hand === dealerHand ? 'back-red' : card.face;
     cardsHtml += `<div class="card large ${cardClass}"></div>`;
   });
   container.innerHTML = cardsHtml;
@@ -221,20 +222,19 @@ function getOutcome() {
     if (handStatus === 'PBJ') {
       dealerMsgEl.innerHTML = `<span>Dealer: Winner Winner, Chicken Dinner! You got a Blackjack this hand!</span>`;
     } else {
-    handStatus = 'P';
-    dealerMsgEl.innerHTML = `<span>Dealer: You won this hand! ${playerTotal} beats ${dealerTotal}.</span>`;
+      handStatus = 'P';
+      dealerMsgEl.innerHTML = `<span>Dealer: You won this hand! ${playerTotal} beats ${dealerTotal}.</span>`;
     }
   } else if (dealerTotal > playerTotal) {
     if (handStatus === 'DBJ') {
       dealerMsgEl.innerHTML = `<span>Dealer: Sorry! I got a Blackjack this hand!</span>`;
     } else {    
-    handStatus = 'D';
-    dealerMsgEl.innerHTML = `<span>Dealer: I won this hand! ${dealerTotal} beats ${playerTotal}.</span>`;
+      handStatus = 'D';
+      dealerMsgEl.innerHTML = `<span>Dealer: I won this hand! ${dealerTotal} beats ${playerTotal}.</span>`;
     }
   } else if (dealerTotal === playerTotal) {
     handStatus = 'T';
     dealerMsgEl.innerHTML = `<span>Dealer: This hand is a push! We both got ${playerTotal}.</span>`;
-
   } else {
     handStatus = null;
   }
